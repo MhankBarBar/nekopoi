@@ -22,5 +22,5 @@
 
 ### Installation
 ```bash
-> python3 -m pip install requests bs4
+> python3 -m pip install cloudscraper bs4
 ```
