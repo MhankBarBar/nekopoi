@@ -29,8 +29,8 @@ class Hent(Req):
             poi.sinopsis = info.select("p")[1].text
             poi.genre = [g.strip() for g in info.select("p")[2].b.next_sibling.split(",")]
             poi.producers = info.select("p")[4].b.next_sibling.lstrip(": ")
-            if (vidbin := search("http?s://videobin.co/(.*?).html", parse.prettify())):
-                if (res := search("http?s://(.*?)/(.*?).mp4", self.get(vidbin.group()).text)):
+            if (vidbin := search("https://videobin.co/.+?.html", parse.prettify())):
+                if (res := search("https://.+?/.+?.mp4", self.get(vidbin.group()).text)):
                     poi.stream = res.group().split("\"")[-1]
             poi.download = {}
             for x in parse.select("div[class=\"liner\"]"):
@@ -39,5 +39,45 @@ class Hent(Req):
                     poi.download[self.text.reso(x.div.text)].update({y.text.lower(): y.get("href")})
             return poi
         except Exception as e:
+            #print(e)
+            return Exception("Maybe url invalid")
+
+class Jav(Req):
+
+    def __init__(self, url: Union[str]) -> None:
+        """
+        :url: String
+        :e.g:
+        from nekopoi import Jav
+        jav = Jav("https://nekopoi.care/ipx-700-jav-miu-shiramine-a-super-luxury-mens-beauty-treatment-salon-that-makes-beautiful-legs-glamorous-testicles/").getto
+        jav.to_json
+        """
+        super().__init__()
+        self.url = url
+        self.text = Texto()
+
+    @property
+    def getto(self) -> PoiInfo:
+        try:
+            parse = bs(self.get(self.url).text, "html.parser")
+            jav = PoiInfo()
+            info = parse.find("div", {"class": "contentpost"})
+            jav.title = info.img.get("title")
+            jav.thumbnail = info.img.get("srcset").split()[-2]
+            jav.movie_id = info.select("p")[1].text.split(":")[1].strip()
+            jav.producers = info.select("p")[2].text.split(":")[1].strip()
+            jav.artist = info.select("p")[3].text.split(":")[1].strip()
+            jav.genre = [g.strip() for g in info.select("p")[4].b.next_sibling.split(",")]
+            jav.duration = info.select("p")[5].b.next_sibling
+            if (vidbin := search("https://videobin.co/.+?.html", parse.prettify())):
+                if (res := search("https://.+?/.+?.mp4", self.get(vidbin.group()).text)):
+                    jav.stream = res.group().split("\"")[-1]
+            jav.download = {}
+            for x in parse.select("div[class=\"liner\"]"):
+                jav.download[self.text.reso(x.div.text)] = {}
+                for y in x.select("a"):
+                    jav.download[self.text.reso(x.div.text)].update({y.text.lower(): y.get("href")})
+            return jav
+        except Exception as e:
             print(e)
-            return Exception("Invalid link")
+            return Exception("Maybe url invalid")

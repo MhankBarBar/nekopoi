@@ -27,4 +27,4 @@ class Texto:
         Get resoluion only
         :text: String
         """
-        return text.split("Indonesia")[1].strip(" [").strip("]")
+        return text.split("Indonesia")[1].strip(" [").strip("]") if "Indonesia" in text else text.split()[-1].strip("[").strip("]")

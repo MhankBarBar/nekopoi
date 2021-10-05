@@ -15,9 +15,15 @@
 
 ### Example
 ```python
+# Hentai Scraper
 >>> from nekopoi import Hent
 >>> sc = Hent("https://nekopoi.care/kono-kaisha-nanika-okashii-episode-2-subtitle-indonesia/").getto
 >>> sc.to_json
+
+# Jav Scraper
+>>> from nekopoi import Jav
+>>> ja = Jav("https://nekopoi.care/ipx-700-jav-miu-shiramine-a-super-luxury-mens-beauty-treatment-salon-that-makes-beautiful-legs-glamorous-testicles/").getto
+>>> ja.to_json
 ```
 
 ### Installation
