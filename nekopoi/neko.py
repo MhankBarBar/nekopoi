@@ -74,7 +74,7 @@ class Jav(Session):
             jav = PoiInfo()
             info = parse.find("div", {"class": "contentpost"})
             oppai = info.select("p")
-            jav.title = info.img.get("title")
+            jav.title = text.tsplit(info.img.get("title"))
             jav.thumbnail = info.img.get("srcset").split()[-2]
             jav.movie_id = oppai[0 if len(oppai) == 6 else 1].text.split(":")[1].strip()
             jav.producers = oppai[1 if len(oppai) == 6 else 2].text.split(":")[1].strip()
