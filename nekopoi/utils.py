@@ -1,11 +1,5 @@
-from cloudscraper import create_scraper
 from typing import Union
-
-class Req:
-
-    def __init__(self) -> None:
-        scraper = create_scraper(delay=10)
-        self.get = scraper.get
+from re import sub
 
 class Texto:
 
@@ -17,10 +11,8 @@ class Texto:
         Get title hentai and delete blablabla
         :text: String
         """
-        for i in ["[3D]","[NEW Release]","[Uncensored]"]:
-            if i in text:
-                text = text.split(i)[1].strip()
-        return text.split("Episode")[0].strip()
+        pattern = r"(?i)(\[yaoi alert\]|\[uncensored\]|\[new release\]|\[batch\]|\[remastered\]|\[fix\]|\[special xmas\]|\[jav sub indo\]|\[tamat\]|\[3d\]|\[3d hentai\]|re-upload)"
+        return sub(pattern, "", text).strip()
 
     def reso(self, text: Union[str]) -> str:
         """

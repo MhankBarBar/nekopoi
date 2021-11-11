@@ -1,20 +1,24 @@
 from bs4 import BeautifulSoup as bs
 from re import search
+from requests import Session
 from typing import Union
 from .poi import PoiInfo
-from .utils import Req, Texto
+from .utils import Texto
 
-class Hent(Req):
+class Hent(Session):
 
-    def __init__(self, url: Union[str]) -> None:
+    def __init__(self, url: Union[str], proxy: Union[dict]={}) -> None:
         """
         :url: String
+        :proxy: Dict
         :e.g:
         from nekopoi import Hent
         hentai = Hent("https://nekopoi.care/torokase-orgasm-the-animation-episode-1-subtitle-indonesia/").getto
         hentai.to_json
         """
         super().__init__()
+        if proxy:
+            self.proxies = proxy
         self.url = url
         self.text = Texto()
 
@@ -33,7 +37,9 @@ class Hent(Req):
             poi.duration = oppai[4].b.next_sibling
             if (vidbin := search("https://videobin.co/.+?.html", parse.prettify())):
                 if (res := search("https://.+?/.+?.mp4", self.get(vidbin.group()).text)):
-                    poi.stream = res.group().split("\"")[-1]
+                    poi.stream = {}
+                    poi.stream["url"] = res.group().split("\"")[-1]
+                    poi.stream["headers"] = self.headers
             poi.download = {}
             for x in parse.select("div[class=\"liner\"]"):
                 poi.download[self.text.reso(x.div.text)] = {}
@@ -44,17 +50,20 @@ class Hent(Req):
             print(e)
             return Exception("Maybe url invalid")
 
-class Jav(Req):
+class Jav(Session):
 
-    def __init__(self, url: Union[str]) -> None:
+    def __init__(self, url: Union[str], proxy: Union[dict]={}) -> None:
         """
         :url: String
+        :Proxy: Dict
         :e.g:
         from nekopoi import Jav
         jav = Jav("https://nekopoi.care/ipx-700-jav-miu-shiramine-a-super-luxury-mens-beauty-treatment-salon-that-makes-beautiful-legs-glamorous-testicles/").getto
         jav.to_json
         """
         super().__init__()
+        if proxy:
+            self.proxies = proxy
         self.url = url
         self.text = Texto()
 
@@ -64,16 +73,20 @@ class Jav(Req):
             parse = bs(self.get(self.url).text, "html.parser")
             jav = PoiInfo()
             info = parse.find("div", {"class": "contentpost"})
+            oppai = info.select("p")
             jav.title = info.img.get("title")
             jav.thumbnail = info.img.get("srcset").split()[-2]
-            jav.movie_id = info.select("p")[1].text.split(":")[1].strip()
-            jav.producers = info.select("p")[2].text.split(":")[1].strip()
-            jav.artist = info.select("p")[3].text.split(":")[1].strip()
-            jav.genre = [g.strip() for g in info.select("p")[4].b.next_sibling.split(",")]
-            jav.duration = info.select("p")[5].b.next_sibling
+            jav.movie_id = oppai[0 if len(oppai) == 6 else 1].text.split(":")[1].strip()
+            jav.producers = oppai[1 if len(oppai) == 6 else 2].text.split(":")[1].strip()
+            jav.artist = oppai[2 if len(oppai) == 6 else 3].text.split(":")[1].strip()
+            genres = oppai[3].text.split(":")[1].strip().split(",") if len(oppai) == 6 else oppai[3].text.split(":")[1].strip(".").split(",")
+            jav.genre = [g.strip() for g in genres]
+            jav.duration = oppai[4 if len(oppai) == 6 else 5].text.split(":")[1].strip()
             if (vidbin := search("https://videobin.co/.+?.html", parse.prettify())):
                 if (res := search("https://.+?/.+?.mp4", self.get(vidbin.group()).text)):
-                    jav.stream = res.group().split("\"")[-1]
+                    jav.stream = {}
+                    jav.stream["url"] = res.group().split("\"")[-1]
+                    jav.stream["headers"] = self.headers
             jav.download = {}
             for x in parse.select("div[class=\"liner\"]"):
                 jav.download[self.text.reso(x.div.text)] = {}
