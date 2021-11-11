@@ -32,6 +32,15 @@
 >>> from nekopoi import Jav
 >>> ja = Jav("https://nekopoi.care/ipx-700-jav-miu-shiramine-a-super-luxury-mens-beauty-treatment-salon-that-makes-beautiful-legs-glamorous-testicles/", proxy={"http": "http://host:port"}).getto
 >>> ja.to_json
+
+# 3D Hentai Scraper
+>>> from nekopoi import ThreeD
+>>> tridi = ThreeD("https://nekopoi.care/3d-hentai-hige-wo-soru-fucked-sayu-ogiwara/").getto
+>>> tridi.to_json
+# 3D Hentai Scraper Using Proxy
+>>> from nekopoi import ThreeD
+>>> tridi = ThreeD("https://nekopoi.care/3d-hentai-hige-wo-soru-fucked-sayu-ogiwara/", proxy={"http": "http://host:port"}).getto
+>>> tridi.to_json
 ```
 
 ### Installation
