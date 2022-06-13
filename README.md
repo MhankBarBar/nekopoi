@@ -8,9 +8,9 @@
 ----------
 ### Todo
 ----------
-- [-] Search by genre
-- [-] Search by query
-- [-] Scrap from homepage
+- [ ] Search by genre
+- [ ] Search by query
+- [ ] Scrap from homepage
 ----------
 
 ### Example
